@@ -14,7 +14,7 @@ body {
   background-size: cover;
   background-position: center;
   background-color: pink;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.3s ease; /* fade duration 0.3s */
   cursor: pointer;
 }
 #click {
@@ -38,35 +38,39 @@ body {
 <script>
 // ================= BACKGROUNDS =================
 const backgrounds = [
-  "bg1.png","bg2.png",
-  "bg3.png","bg4.png",
-  "bg5.png","bg6.png",
-  "bg7.png","bg8.png","bg9.png"
+  "bg1.png","bg2.png","bg3.png","bg4.png","bg5.png",
+  "bg6.png","bg7.png","bg8.png","bg9.png"
 ];
 
 let index = 0;
 document.body.style.backgroundImage = `url(${backgrounds[index]})`;
 
-setInterval(() => {
-  document.body.style.opacity = 0;
-  setTimeout(() => {
-    index = (index + 1) % backgrounds.length;
-    document.body.style.backgroundImage = `url(${backgrounds[index]})`;
-    document.body.style.opacity = 1;
-  }, 600);
-}, 300);
-
-// ================= MUSIC =================
+// ================= MUSIC & FADE =================
 const music = document.getElementById("music");
 let started = false;
+let intervalId = null;
 
 document.body.addEventListener("click", async () => {
   if (started) return;
   started = true;
-  
+
   try {
-    await music.play(); // Start looping music
-    document.getElementById("click").remove(); // Remove click message
+    // Start music
+    await music.play();
+
+    // Remove click message
+    document.getElementById("click").remove();
+
+    // Start background fading every 0.3 seconds
+    intervalId = setInterval(() => {
+      document.body.style.opacity = 0;
+      setTimeout(() => {
+        index = (index + 1) % backgrounds.length;
+        document.body.style.backgroundImage = `url(${backgrounds[index]})`;
+        document.body.style.opacity = 1;
+      }, 300); // wait for fade-out before changing image
+    }, 300); // new image every 0.3 seconds
+
   } catch (err) {
     started = false;
     alert("Click again to enable audio.");
