@@ -14,8 +14,8 @@ body {
   background-size: cover;
   background-position: center;
   background-color: pink;
-  transition: opacity 0.3s ease; /* fade duration 0.3s */
   cursor: pointer;
+  transition: opacity 0.3s ease;
 }
 #click {
   position: fixed;
@@ -28,12 +28,25 @@ body {
   opacity: 0.7;
   pointer-events: none;
 }
+#fadeOverlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-color:black;
+  opacity:0;
+  pointer-events:none;
+  z-index: 1000;
+  transition: opacity 1.5s ease;
+}
 </style>
 </head>
 <body>
 
 <div id="click">Click anywhere to start</div>
-<audio id="music" src="music.mp3" loop></audio>
+<div id="fadeOverlay"></div>
+<audio id="music" src="music.mp3" preload="auto"></audio>
 
 <script>
 // ================= BACKGROUNDS =================
@@ -44,32 +57,53 @@ const backgrounds = [
 
 let index = 0;
 document.body.style.backgroundImage = `url(${backgrounds[index]})`;
+let bgInterval = null;
 
 // ================= MUSIC & FADE =================
 const music = document.getElementById("music");
+const fadeOverlay = document.getElementById("fadeOverlay");
 let started = false;
-let intervalId = null;
+
+const fadeDuration = 1.5; // seconds before music ends to fade out
+const audioLength = 51;   // music length in seconds
 
 document.body.addEventListener("click", async () => {
   if (started) return;
   started = true;
 
   try {
-    // Start music
     await music.play();
-
-    // Remove click message
     document.getElementById("click").remove();
 
-    // Start background fading every 0.3 seconds
-    intervalId = setInterval(() => {
+    // Start background fade every 0.3s
+    bgInterval = setInterval(() => {
+      // Slow down background fade if overlay is active
+      const speedMultiplier = fadeOverlay.style.opacity > 0 ? 0.5 : 1;
       document.body.style.opacity = 0;
       setTimeout(() => {
         index = (index + 1) % backgrounds.length;
         document.body.style.backgroundImage = `url(${backgrounds[index]})`;
         document.body.style.opacity = 1;
-      }, 300); // wait for fade-out before changing image
-    }, 300); // new image every 0.3 seconds
+      }, 300 * speedMultiplier);
+    }, 300);
+
+    // Sync fade overlay with music loop
+    music.addEventListener("timeupdate", () => {
+      const timeLeft = audioLength - music.currentTime;
+
+      // Smooth proportional fade
+      if(timeLeft <= fadeDuration){
+        fadeOverlay.style.opacity = (fadeDuration - timeLeft) / fadeDuration;
+      } else {
+        fadeOverlay.style.opacity = 0;
+      }
+
+      // Manual loop
+      if(music.currentTime >= audioLength){
+        music.currentTime = 0;
+        music.play();
+      }
+    });
 
   } catch (err) {
     started = false;
@@ -80,6 +114,7 @@ document.body.addEventListener("click", async () => {
 
 </body>
 </html>
+
 
 
 
