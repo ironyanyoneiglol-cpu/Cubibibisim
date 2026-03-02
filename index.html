@@ -10,25 +10,13 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
-
-/* Hide default cursor */
 body {
   background-size: cover;
   background-position: center;
   background-color: pink;
-  transition: opacity 0.3s ease;
-  cursor: none;
+  transition: opacity 0.3s ease; /* fade duration 0.3s */
+  cursor: pointer;
 }
-
-/* Floating heart */
-.heart {
-  position: fixed;
-  pointer-events: none;
-  font-size: 28px;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-}
-
 #click {
   position: fixed;
   bottom: 12px;
@@ -45,7 +33,6 @@ body {
 <body>
 
 <div id="click">Click anywhere to start</div>
-<div class="heart" id="heart">❤️</div>
 <audio id="music" src="music.mp3" loop></audio>
 
 <script>
@@ -56,15 +43,7 @@ const backgrounds = [
 ];
 
 let index = 0;
-document.body.style.backgroundImage = `url(${backgrounds[index]})`;
-
-// ================= FLOATING HEART =================
-const heart = document.getElementById("heart");
-
-document.addEventListener("mousemove", e => {
-  heart.style.left = e.clientX + "px";
-  heart.style.top = e.clientY + "px";
-});
+document.body.style.backgroundImage = url(${backgrounds[index]});
 
 // ================= MUSIC & FADE =================
 const music = document.getElementById("music");
@@ -87,10 +66,10 @@ document.body.addEventListener("click", async () => {
       document.body.style.opacity = 0;
       setTimeout(() => {
         index = (index + 1) % backgrounds.length;
-        document.body.style.backgroundImage = `url(${backgrounds[index]})`;
+        document.body.style.backgroundImage = url(${backgrounds[index]});
         document.body.style.opacity = 1;
-      }, 300);
-    }, 300);
+      }, 300); // wait for fade-out before changing image
+    }, 300); // new image every 0.3 seconds
 
   } catch (err) {
     started = false;
@@ -101,6 +80,4 @@ document.body.addEventListener("click", async () => {
 
 </body>
 </html>
-
-
 
