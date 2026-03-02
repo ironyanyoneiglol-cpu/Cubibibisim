@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>about me</title>
-
 <style>
 html, body {
   margin: 0;
@@ -11,7 +10,6 @@ html, body {
   height: 100%;
   overflow: hidden;
 }
-
 body {
   background-size: cover;
   background-position: center;
@@ -19,7 +17,6 @@ body {
   transition: opacity 0.6s ease;
   cursor: pointer;
 }
-
 #click {
   position: fixed;
   bottom: 12px;
@@ -33,16 +30,13 @@ body {
 }
 </style>
 </head>
-
 <body>
 
 <div id="click">click anywhere to start</div>
-
-<audio id="music" preload="auto"></audio>
+<audio id="music" src="music.mp3" preload="auto"></audio>
 
 <script>
-/* ================= BACKGROUNDS ================= */
-
+/* ========== BACKGROUNDS ========== */
 const backgrounds = [
   "bg1.png","bg1.5.png","bg2.png","bg2.5.png",
   "bg3.png","bg3.5.png","bg4.png","bg4.5.png",
@@ -55,25 +49,19 @@ document.body.style.backgroundImage = `url(${backgrounds[index]})`;
 
 setInterval(() => {
   document.body.style.opacity = 0;
-
   setTimeout(() => {
     index = (index + 1) % backgrounds.length;
     document.body.style.backgroundImage = `url(${backgrounds[index]})`;
     document.body.style.opacity = 1;
-  }, 300);
+  }, 600);
+}, 200);
 
-}, 200); // 2 seconds per image
-
-
-/* ================= MUSIC ================= */
-
+/* ========== MUSIC ========== */
 const music = document.getElementById("music");
-music.src = "music.mp3";
 music.volume = 1;
 
-const loopStart = 152; // 2:32
-const loopEnd   = 161; // 2:41
-
+const loopStart = 152;
+const loopEnd = 161;
 let started = false;
 
 document.body.addEventListener("click", async () => {
@@ -81,7 +69,6 @@ document.body.addEventListener("click", async () => {
   started = true;
 
   try {
-    // Wait until metadata is loaded before seeking
     if (music.readyState < 1) {
       await new Promise(resolve =>
         music.addEventListener("loadedmetadata", resolve, { once: true })
@@ -90,9 +77,7 @@ document.body.addEventListener("click", async () => {
 
     music.currentTime = loopStart;
     await music.play();
-
     document.getElementById("click").remove();
-
   } catch (err) {
     started = false;
     alert("Click again to enable audio.");
