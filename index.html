@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>about me</title>
+<title>About Me</title>
 <style>
 html, body {
   margin: 0;
@@ -23,7 +23,7 @@ body {
   width: 100%;
   text-align: center;
   font-family: sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   color: white;
   opacity: 0.7;
   pointer-events: none;
@@ -32,11 +32,11 @@ body {
 </head>
 <body>
 
-<div id="click">click anywhere to start</div>
-<audio id="music" src="music.mp3" preload="auto"></audio>
+<div id="click">Click anywhere to start</div>
+<audio id="music" src="music.mp3" loop></audio>
 
 <script>
-/* ========== BACKGROUNDS ========== */
+// ================= BACKGROUNDS =================
 const backgrounds = [
   "bg1.png","bg1.5.png","bg2.png","bg2.5.png",
   "bg3.png","bg3.5.png","bg4.png","bg4.5.png",
@@ -54,39 +54,22 @@ setInterval(() => {
     document.body.style.backgroundImage = `url(${backgrounds[index]})`;
     document.body.style.opacity = 1;
   }, 600);
-}, 200);
+}, 2000);
 
-/* ========== MUSIC ========== */
+// ================= MUSIC =================
 const music = document.getElementById("music");
-music.volume = 1;
-
-const loopStart = 152;
-const loopEnd = 161;
 let started = false;
 
 document.body.addEventListener("click", async () => {
   if (started) return;
   started = true;
-
+  
   try {
-    if (music.readyState < 1) {
-      await new Promise(resolve =>
-        music.addEventListener("loadedmetadata", resolve, { once: true })
-      );
-    }
-
-    music.currentTime = loopStart;
-    await music.play();
-    document.getElementById("click").remove();
+    await music.play(); // Start looping music
+    document.getElementById("click").remove(); // Remove click message
   } catch (err) {
     started = false;
     alert("Click again to enable audio.");
-  }
-});
-
-music.addEventListener("timeupdate", () => {
-  if (music.currentTime >= loopEnd) {
-    music.currentTime = loopStart;
   }
 });
 </script>
