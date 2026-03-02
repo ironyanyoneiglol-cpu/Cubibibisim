@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>about me</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background-size: cover;
+      background-position: center;
+      transition: opacity 0.5s linear;
+      background-color: pink;
+      cursor: pointer;
+    }
+
+    #click {
+      position: fixed;
+      bottom: 12px;
+      width: 100%;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 12px;
+      color: white;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="click">click anywhere to start</div>
+
+<!-- IMPORTANT FIX IS HERE -->
+<audio id="music" preload="auto"></audio>
+
+<script>
+  // ===== BACKGROUNDS =====
+  const backgrounds = [
+    "bg1.png",
+    "bg1.5.png",
+    "bg2.png",
+    "bg2.5.png",
+    "bg3.png",
+    "bg3.5.png",
+    "bg4.png",
+    "bg4.5.png",
+    "bg5.png",
+    "bg5.5.png",
+    "bg6.png",
+    "bg6.5.png",
+    "bg7.png",
+    "bg8.png",
+    "bg9.png"
+  ];
+
+  let i = 0;
+  document.body.style.backgroundImage = `url(${backgrounds[0]})`;
+
+  setInterval(() => {
+    document.body.style.opacity = 0;
+    setTimeout(() => {
+      i = (i + 1) % backgrounds.length;
+      document.body.style.backgroundImage = `url(${backgrounds[i]})`;
+      document.body.style.opacity = 1;
+    }, 250);
+  }, 200);
+
+  // ===== MUSIC =====
+  const music = document.getElementById("music");
+  music.src = "music.mp3";   // set source AFTER page loads
+  music.volume = 1;
+
+  const loopStart = 152; // 2:32
+  const loopEnd   = 161; // 2:41
+
+  let started = false;
+
+  document.body.addEventListener("click", () => {
+    if (started) return;
+    started = true;
+
+    music.currentTime = loopStart;
+    music.muted = false;
+
+    music.play().then(() => {
+      document.getElementById("click").remove();
+    }).catch(() => {
+      alert("Click once more to enable audio");
+    });
+  });
+
+  music.addEventListener("timeupdate", () => {
+    if (music.currentTime >= loopEnd) {
+      music.currentTime = loopStart;
+    }
+  });
+</script>
+
+</body>
+</html>
